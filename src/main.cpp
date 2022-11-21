@@ -3,13 +3,14 @@
 #include <SoftwareSerial.h>
 #include <SPI.h>
 #include<LibRobus.h>
+#include <math.h>
 
 // Pick analog outputs, for the UNO these three work well
 // use ~560  ohm resistor between Red & Blue, ~1K for green (its brighter)
 
 //constante des différentes couleurs des skittles
 #define GREEN 30
-#define YELLOW 22 
+#define YELLOW 22
 #define ORANGE 24
 #define PURPLE 28
 #define BLUE 23
@@ -53,7 +54,7 @@ void setup() {
      MOTOR_SetSpeed(0,0);
     MOTOR_SetSpeed(1,0);
     Serial.println("Color View Test!");
-    
+
 
     if (tcs.begin()) {
         Serial.println("Found sensor");
@@ -91,7 +92,7 @@ void loop() {
      MOTOR_SetSpeed(0,0);
    MOTOR_SetSpeed(1,0);
     uint16_t clear, red, green, blue;
-  
+
 
 
     delay(150);  // takes 50ms to read
@@ -112,8 +113,8 @@ void loop() {
     b = blue; //b /= sum;
     // r *= 256; g *= 256; b *= 256;
     Serial.print("\t");
-    Serial.print((int)r, HEX); 
-    Serial.print((int)g, HEX); 
+    Serial.print((int)r, HEX);
+    Serial.print((int)g, HEX);
     Serial.print((int)b, HEX);
     Serial.println();
     //color(red,blue,green);
@@ -129,9 +130,9 @@ void loop() {
 
 
 
-   
 
-    
+
+
 
     for(int i=0; i<10; i++){
         if(red>blue){
@@ -142,15 +143,15 @@ void loop() {
     }
 
     void color(int red, int blue,  int green){
-    
-  
+
+
    if(red<blue && red>green){ //rouge
         turnoff();
           digitalWrite(RED,HIGH);
         Serial.println("rouge");
-       
+
         //pinMode(redpin,OUTPUT);
-        
+
     }
     else if(blue>1.9*red && green<1.2*blue){
       turnoff();
@@ -177,7 +178,7 @@ void Lecture() //fonction qui lit la couleur d'un skittle avec une moyenne de ci
 
     uint16_t  red = 0, green = 0, blue = 0, clear = 0;
     int totalRouge = 0;
-    int totalVert = 0; 
+    int totalVert = 0;
     int totalBleu = 0;
     //boucle pour cinq lectures
     for (int i = 0; i < 5; i++)
@@ -185,7 +186,7 @@ void Lecture() //fonction qui lit la couleur d'un skittle avec une moyenne de ci
         tcs.getRawData(&red, &green, &blue, &clear); //on lit
         totalRouge += red;
         Serial.print(totalRouge);
-        totalVert += green; 
+        totalVert += green;
         Serial.print(totalVert);
         totalBleu += blue;
         Serial.print(totalBleu);
@@ -198,7 +199,7 @@ void Lecture() //fonction qui lit la couleur d'un skittle avec une moyenne de ci
 
 }
 
-int DeterminerCouleur() //détermine la couleur du skittle
+int determinerCouleur() //détermine la couleur du skittle
 {
     Lecture();
     //on déclare des tableaux pour les différences de valeurs RGB
@@ -209,25 +210,25 @@ int DeterminerCouleur() //détermine la couleur du skittle
     int deltaSkittleViolet[3];
     //trouvons la différence entre les valeurs RGB des différents skittles et les valeurs RGB lues
     //différence avec skittle Rouge
-    deltaSkittleRouge[0] = skittleRouge[0]- *moyenneRouge;
-    deltaSkittleRouge[1] = skittleRouge[1]- *moyenneVert;
-    deltaSkittleRouge[2] = skittleRouge[2]- *moyenneBleu;
+    deltaSkittleRouge[0] = abs(skittleRouge[0]- *moyenneRouge);
+    deltaSkittleRouge[1] = abs(skittleRouge[1]- *moyenneVert);
+    deltaSkittleRouge[2] = abs(skittleRouge[2]- *moyenneBleu);
     //différence avec skittle Vert
-    deltaSkittleVert[0] = skittleVert[0]- *moyenneRouge;
-    deltaSkittleVert[1] = skittleVert[1]- *moyenneVert;
-    deltaSkittleVert[2] = skittleVert[2]- *moyenneBleu;
+    deltaSkittleVert[0] = abs(skittleVert[0]- *moyenneRouge);
+    deltaSkittleVert[1] = abs(skittleVert[1]- *moyenneVert);
+    deltaSkittleVert[2] = abs(skittleVert[2]- *moyenneBleu);
     //différence avec skittle Jaune
-    deltaSkittleJaune[0] = deltaSkittleJaune[0]- *moyenneRouge;
-    deltaSkittleJaune[1] = deltaSkittleJaune[1]- *moyenneVert;
-    deltaSkittleJaune[2] = deltaSkittleJaune[2]- *moyenneBleu;
+    deltaSkittleJaune[0] = abs(deltaSkittleJaune[0]- *moyenneRouge);
+    deltaSkittleJaune[1] = abs(deltaSkittleJaune[1]- *moyenneVert);
+    deltaSkittleJaune[2] = abs(deltaSkittleJaune[2]- *moyenneBleu);
     //différence avec skittle Orange
-    deltaSkittleOrange[0] = skittleOrange[0]- *moyenneRouge;
-    deltaSkittleOrange[1] = skittleOrange[1]- *moyenneVert;
-    deltaSkittleOrange[2] = skittleOrange[2]- *moyenneBleu;
+    deltaSkittleOrange[0] = abs(skittleOrange[0]- *moyenneRouge);
+    deltaSkittleOrange[1] = abs(skittleOrange[1]- *moyenneVert);
+    deltaSkittleOrange[2] = abs(skittleOrange[2]- *moyenneBleu);
     //différence avec skittle Violet
-    deltaSkittleViolet[0] = skittleViolet[0]- *moyenneRouge;
-    deltaSkittleViolet[1] = skittleViolet[1]- *moyenneVert;
-    deltaSkittleViolet[2] = skittleViolet[2]- *moyenneBleu;
+    deltaSkittleViolet[0] = abs(skittleViolet[0]- *moyenneRouge);
+    deltaSkittleViolet[1] = abs(skittleViolet[1]- *moyenneVert);
+    deltaSkittleViolet[2] = abs(skittleViolet[2]- *moyenneBleu);
     //sommes des différences
     int sommeDeltaRouge = 0, sommeDeltaVert = 0, sommeDeltaJaune = 0, sommeDeltaOrange = 0, sommeDeltaViolet = 0;
     for (int i = 0; i < 3; i++)
@@ -260,7 +261,7 @@ int DeterminerCouleur() //détermine la couleur du skittle
         Serial.println("Orange");
         return ORANGE;
     }
-    else 
+    else
     {
         Serial.println("Violet");
         return PURPLE;
@@ -292,10 +293,10 @@ int DeterminerCouleur() //détermine la couleur du skittle
         Serial.println("Skittle mauve");
         return PURPLE;
     }
-    else 
+    else
     {
         Serial.println("Couleur non déterminée");
-        return 0; 
+        return 0;
     }
 */
 }
