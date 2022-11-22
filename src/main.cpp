@@ -7,7 +7,6 @@
 
 // Pick analog outputs, for the UNO these three work well
 // use ~560  ohm resistor between Red & Blue, ~1K for green (its brighter)
-
 //constante des différentes couleurs des skittles
 #define GREEN 30
 #define YELLOW 22
@@ -15,31 +14,30 @@
 #define PURPLE 28
 #define BLUE 23
 # define RED 21
-
-
 // for a common anode LED, connect the common pin to +5V
 // for common cathode, connect the common to groundé
-
 // set to false if using a common cathode LED
 #define commonAnode false
 
+// Sorting servo data (SORT prefix defines the servo angles for components)
+#define SERVO_SORT  0   // TODO: vérifier si le servo est le bon
+#define SORT_TARGET 0   // TODO: vérifier si l'angle du servo est le bon
+#define SORT_TRASH  180 // TODO: vérifier si l'angle du servo est le bon
+#define SORT_SENSOR 90  // TODO: vérifier si l'angle du servo est le bon
+
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
-
 //initialise des pointeurs de moyenne des couleurs
 int *moyenneRouge = NULL;
 int *moyenneVert = NULL;
 int *moyenneBleu = NULL;
-
 //valeurs RGB des différentes couleurs de skittles
-int skittleRouge[3]={255,0,0 };
-int skittleVert[3]={0,255,0};
-int skittleBleu[3]={0,0,255};
-int skittleOrange[3]={255,69,0};
-int skittleViolet[3]={128,0,0};
-
-//tableau taille 3 pour les valeurs RGB du skittle lu
-int SkittleLu[3];
+static const int SKITTLEROUGE[3]={255,0,0 };
+static const int SKITTLEVERT[3]={0,255,0};
+static const int SKITTLEBLEU[3]={0,0,255};
+static const int SKITTLEORANGE[3]={255,69,0};
+static const int SKITTLEVIOLET[3]={128,0,0};
+int SkittleLu[3]; //tableau taille 3 pour les valeurs RGB du skittle lu
 
 //void turnoff();
 
@@ -51,7 +49,7 @@ int determinerCouleur();
 void setup() {
     Serial.begin(9600);
     BoardInit();
-     MOTOR_SetSpeed(0,0);
+    MOTOR_SetSpeed(0,0);
     MOTOR_SetSpeed(1,0);
     Serial.println("Color View Test!");
 
@@ -93,8 +91,6 @@ void loop() {
    MOTOR_SetSpeed(1,0);
     uint16_t clear, red, green, blue;
 
-
-
     delay(150);  // takes 50ms to read
 
     tcs.getRawData(&red, &green, &blue, &clear);
@@ -126,63 +122,16 @@ void loop() {
     analogWrite(bluepin, gammatable[(int)b]);*/
 }
 
-/*
 
-
-
-
-
-
-
-    for(int i=0; i<10; i++){
-        if(red>blue){
-
-        }
-
-
-    }
-
-    void color(int red, int blue,  int green){
-
-
-   if(red<blue && red>green){ //rouge
-        turnoff();
-          digitalWrite(RED,HIGH);
-        Serial.println("rouge");
-
-        //pinMode(redpin,OUTPUT);
-
-    }
-    else if(blue>1.9*red && green<1.2*blue){
-      turnoff();
-     digitalWrite(GREEN,HIGH);
-     Serial.println("vert");
-    }
-
-     else if(green>1.5*red && green<blue){
-         turnoff();
-          digitalWrite(BLUE,HIGH);
-     Serial.println("bleu");
-    }
-     else if(red>1.3*blue && red>green){
-         turnoff();
-          digitalWrite(YELLOW,HIGH);
-     Serial.println("jaune");
-    }
-
-
-}*/
-
-void Lecture() //fonction qui lit la couleur d'un skittle avec une moyenne de cinq lectures
-{
+//fonction qui lit la couleur d'un skittle avec une moyenne de cinq lectures
+void Lecture() {
 
     uint16_t  red = 0, green = 0, blue = 0, clear = 0;
     int totalRouge = 0;
     int totalVert = 0;
     int totalBleu = 0;
     //boucle pour cinq lectures
-    for (int i = 0; i < 5; i++)
-    {
+    for (int i = 0; i < 5; i++) {
         tcs.getRawData(&red, &green, &blue, &clear); //on lit
         totalRouge += red;
         Serial.print(totalRouge);
@@ -199,8 +148,8 @@ void Lecture() //fonction qui lit la couleur d'un skittle avec une moyenne de ci
 
 }
 
-int determinerCouleur() //détermine la couleur du skittle
-{
+//détermine la couleur du skittle
+int determinerCouleur() {
     Lecture();
     //on déclare des tableaux pour les différences de valeurs RGB
     int deltaSkittleRouge[3];
@@ -210,30 +159,28 @@ int determinerCouleur() //détermine la couleur du skittle
     int deltaSkittleViolet[3];
     //trouvons la différence entre les valeurs RGB des différents skittles et les valeurs RGB lues
     //différence avec skittle Rouge
-    deltaSkittleRouge[0] = abs(skittleRouge[0]- *moyenneRouge);
-    deltaSkittleRouge[1] = abs(skittleRouge[1]- *moyenneVert);
-    deltaSkittleRouge[2] = abs(skittleRouge[2]- *moyenneBleu);
+    deltaSkittleRouge[0] = abs(SKITTLEROUGE[0]- *moyenneRouge);
+    deltaSkittleRouge[1] = abs(SKITTLEROUGE[1]- *moyenneVert);
+    deltaSkittleRouge[2] = abs(SKITTLEROUGE[2]- *moyenneBleu);
     //différence avec skittle Vert
-    deltaSkittleVert[0] = abs(skittleVert[0]- *moyenneRouge);
-    deltaSkittleVert[1] = abs(skittleVert[1]- *moyenneVert);
-    deltaSkittleVert[2] = abs(skittleVert[2]- *moyenneBleu);
+    deltaSkittleVert[0] = abs(SKITTLEVERT[0]- *moyenneRouge);
+    deltaSkittleVert[1] = abs(SKITTLEVERT[1]- *moyenneVert);
+    deltaSkittleVert[2] = abs(SKITTLEVERT[2]- *moyenneBleu);
     //différence avec skittle Jaune
     deltaSkittleJaune[0] = abs(deltaSkittleJaune[0]- *moyenneRouge);
     deltaSkittleJaune[1] = abs(deltaSkittleJaune[1]- *moyenneVert);
     deltaSkittleJaune[2] = abs(deltaSkittleJaune[2]- *moyenneBleu);
     //différence avec skittle Orange
-    deltaSkittleOrange[0] = abs(skittleOrange[0]- *moyenneRouge);
-    deltaSkittleOrange[1] = abs(skittleOrange[1]- *moyenneVert);
-    deltaSkittleOrange[2] = abs(skittleOrange[2]- *moyenneBleu);
+    deltaSkittleOrange[0] = abs(SKITTLEORANGE[0]- *moyenneRouge);
+    deltaSkittleOrange[1] = abs(SKITTLEORANGE[1]- *moyenneVert);
+    deltaSkittleOrange[2] = abs(SKITTLEORANGE[2]- *moyenneBleu);
     //différence avec skittle Violet
-    deltaSkittleViolet[0] = abs(skittleViolet[0]- *moyenneRouge);
-    deltaSkittleViolet[1] = abs(skittleViolet[1]- *moyenneVert);
-    deltaSkittleViolet[2] = abs(skittleViolet[2]- *moyenneBleu);
+    deltaSkittleViolet[0] = abs(SKITTLEVIOLET[0]- *moyenneRouge);
+    deltaSkittleViolet[1] = abs(SKITTLEVIOLET[1]- *moyenneVert);
+    deltaSkittleViolet[2] = abs(SKITTLEVIOLET[2]- *moyenneBleu);
     //sommes des différences
     int sommeDeltaRouge = 0, sommeDeltaVert = 0, sommeDeltaJaune = 0, sommeDeltaOrange = 0, sommeDeltaViolet = 0;
-    for (int i = 0; i < 3; i++)
-
-    {
+    for (int i = 0; i < 3; i++) {
         sommeDeltaRouge += deltaSkittleRouge[i];
         sommeDeltaVert += deltaSkittleVert[i];
         sommeDeltaJaune += deltaSkittleJaune[i];
@@ -241,64 +188,57 @@ int determinerCouleur() //détermine la couleur du skittle
         sommeDeltaViolet += deltaSkittleViolet[i];
     }
    // int PlusPetiteSomme = 0;
-    if (sommeDeltaRouge <= sommeDeltaVert && sommeDeltaRouge <= sommeDeltaJaune && sommeDeltaRouge <= sommeDeltaOrange && sommeDeltaRouge <= sommeDeltaViolet)
-    {
+    if (sommeDeltaRouge <= sommeDeltaVert && sommeDeltaRouge <= sommeDeltaJaune && sommeDeltaRouge <= sommeDeltaOrange && sommeDeltaRouge <= sommeDeltaViolet){
         Serial.println("Rouge");
         return RED;
     }
-    else if (sommeDeltaVert <= sommeDeltaJaune && sommeDeltaVert <= sommeDeltaOrange && sommeDeltaVert <= sommeDeltaViolet)
-    {
+    else if (sommeDeltaVert <= sommeDeltaJaune && sommeDeltaVert <= sommeDeltaOrange && sommeDeltaVert <= sommeDeltaViolet) {
         Serial.println("Vert");
         return GREEN;
     }
-    else if (sommeDeltaJaune <= sommeDeltaOrange && sommeDeltaJaune <= sommeDeltaViolet)
-    {
+    else if (sommeDeltaJaune <= sommeDeltaOrange && sommeDeltaJaune <= sommeDeltaViolet) {
         Serial.println("Jaune");
         return YELLOW;
     }
-    else if (sommeDeltaOrange <= sommeDeltaViolet)
-    {
+    else if (sommeDeltaOrange <= sommeDeltaViolet) {
         Serial.println("Orange");
         return ORANGE;
     }
-    else
-    {
+    else {
         Serial.println("Violet");
         return PURPLE;
     }
+}
 
-    /*
-    if (moyenneRouge > 560 && moyenneVert < 333 && moyenneBleu < 349) //skittle rouge
-    {
-        Serial.println("Skitttle rouge");
-        return RED;
-    }
-    else if (moyenneRouge > 1440 && moyenneVert < 640 && moyenneBleu < 465) //skittle orange
-    {
-        Serial.println("Skitttle orange");
-        return ORANGE;
-    }
-    else if (moyenneRouge > 580 && moyenneVert < 1010 && moyenneBleu < 560) //skittle vert
-    {
-        Serial.println("Skitttle vert");
-        return GREEN;
-    }
-    else if (moyenneRouge > 1825 && moyenneVert < 1700 && moyenneBleu < 905) //skittle jaune
-    {
-        Serial.println("Skitttle jaune");
-        return YELLOW;
-    }
-    else if (moyenneRouge > 330 && moyenneVert < 420 && moyenneBleu < 465) //skittle mauve
-    {
-        Serial.println("Skittle mauve");
-        return PURPLE;
-    }
-    else
-    {
-        Serial.println("Couleur non déterminée");
-        return 0;
-    }
-*/
+void sortSkittle(int target){
+  // Vérifier quelle est la bonne fonction pour le controlleur
+  ServoSetAngle(SERVO_SORT, SORT_SENSOR)
+  int color = determinerCouleur();
+  switch (color) {
+  case: GREEN
+    Serial.println("Couleur détectée: Vert");
+    break;
+  case: ORANGE
+    Serial.println("Couleur détectée: Orange");
+    break;
+  case: PURPLE
+    Serial.println("Couleur détectée: Violet");
+    break;
+  case: RED
+    Serial.println("Couleur détectée: Rouge");
+    break;
+  case: YELLOW
+    Serial.println("Couleur détectée: Jaune");
+    break;
+  default:
+    Serial.println("Couleur détectée: Inconnue");
+    break;
+  }
+  if(color == target){
+    ServoSetAngle(SERVO_SORT, SORT_TARGET)
+  } else {
+    ServoSetAngle(SERVO_SORT, SORT_TRASH)
+  }
 }
 
 
