@@ -47,6 +47,8 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 //void color(int red, int blue, int green);
 void lecture();
 int determinerCouleur();
+void sortSkittle(int target);
+
 void setup() {
     Serial.begin(9600);
     BoardInit();
