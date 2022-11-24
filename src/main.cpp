@@ -212,22 +212,22 @@ int determinerCouleur() {
 
 void sortSkittle(int target){
   // Vérifier quelle est la bonne fonction pour le controlleur
-  ServoSetAngle(SERVO_SORT, SORT_SENSOR)
+  SERVO_SetAngle(SERVO_SORT, SORT_SENSOR);
   int color = determinerCouleur();
   switch (color) {
-  case: GREEN
+  case GREEN:
     Serial.println("Couleur détectée: Vert");
     break;
-  case: ORANGE
+  case ORANGE:
     Serial.println("Couleur détectée: Orange");
     break;
-  case: PURPLE
+  case PURPLE:
     Serial.println("Couleur détectée: Violet");
     break;
-  case: RED
+  case RED:
     Serial.println("Couleur détectée: Rouge");
     break;
-  case: YELLOW
+  case YELLOW:
     Serial.println("Couleur détectée: Jaune");
     break;
   default:
@@ -235,10 +235,11 @@ void sortSkittle(int target){
     break;
   }
   if(color == target){
-    ServoSetAngle(SERVO_SORT, SORT_TARGET)
+    SERVO_SetAngle(SERVO_SORT, SORT_TARGET);
   } else {
-    ServoSetAngle(SERVO_SORT, SORT_TRASH)
+    SERVO_SetAngle(SERVO_SORT, SORT_TRASH);
   }
+  SERVO_SetAngle(SERVO_SORT, SORT_SENSOR);
 }
 
 
