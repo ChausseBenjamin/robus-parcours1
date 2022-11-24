@@ -35,7 +35,7 @@ int *moyenneBleu = NULL;
 //valeurs RGB des différentes couleurs de skittles
 static const int SKITTLEROUGE[3]={255,0,0 };
 static const int SKITTLEVERT[3]={0,255,0};
-static const int SKITTLEBLEU[3]={0,0,255};
+static const int SKITTLEJAUNE[3]={0,0,255};
 static const int SKITTLEORANGE[3]={255,69,0};
 static const int SKITTLEVIOLET[3]={128,0,0};
 int SkittleLu[3]; //tableau taille 3 pour les valeurs RGB du skittle lu
@@ -154,21 +154,42 @@ void Lecture() {
 //détermine la couleur du skittle
 int determinerCouleur() {
     Lecture();
+    int baseColors[5] = {RED, GREEN, YELLOW, ORANGE, PURPLE};
+    int deltas[5] = {0};
+    int averages[3] = {
+      *moyenneRouge,
+      *moyenneVert,
+      *moyenneBleu,
+    };
+    int colorTable[5][3] = {0};
+    for (int i=0;i<3;i++) {
+      colorTable[0][i] = SKITTLEROUGE[i];
+      colorTable[1][i] = SKITTLEVERT[i];
+      colorTable[2][i] = SKITTLEJAUNE[i];
+      colorTable[3][i] = SKITTLEORANGE[i];
+      colorTable[4][i] = SKITTLEVIOLET[i];
+    }
+
     //on déclare des tableaux pour les différences de valeurs RGB
     int deltaSkittleRouge[3];
     int deltaSkittleVert[3];
     int deltaSkittleJaune[3];
     int deltaSkittleOrange[3];
     int deltaSkittleViolet[3];
+
     //trouvons la différence entre les valeurs RGB des différents skittles et les valeurs RGB lues
 
-    for (int i = 0; i < 3; i++) {
-        deltaSkittleRouge[i] = abs(SKITTLEROUGE[i] - *moyenneRouge);
-        deltaSkittleVert[i] = abs(SKITTLEVERT[i] - *moyenneVert);
-        deltaSkittleJaune[i] = abs(SKITTLEBLEU[i] - *moyenneBleu);
-        deltaSkittleOrange[i] = abs(SKITTLEORANGE[i] - *moyenneRouge);
-        deltaSkittleViolet[i] = abs(SKITTLEVIOLET[i] - *moyenneBleu);
+    int diff;
+    for (int i=0;i<5;i++){
+      for (int j=0;j<3;j++){
+        diff = 0;
+        diff += averages[i] - colorTable[i][j];
+        diff = abs(diff);
+      }
+      deltas[i] = diff;
     }
+
+
 
     // //différence avec skittle Rouge
     // deltaSkittleRouge[0] = abs(SKITTLEROUGE[0]- *moyenneRouge);
@@ -191,28 +212,27 @@ int determinerCouleur() {
     // deltaSkittleViolet[1] = abs(SKITTLEVIOLET[1]- *moyenneVert);
     // deltaSkittleViolet[2] = abs(SKITTLEVIOLET[2]- *moyenneBleu);
 
-    //sommes des différences
-    int sommeDeltaRouge = 0, sommeDeltaVert = 0, sommeDeltaJaune = 0, sommeDeltaOrange = 0, sommeDeltaViolet = 0;
-    for (int i = 0; i < 3; i++) {
-        sommeDeltaRouge += deltaSkittleRouge[i];
-        sommeDeltaVert += deltaSkittleVert[i];
-        sommeDeltaJaune += deltaSkittleJaune[i];
-        sommeDeltaOrange += deltaSkittleOrange[i];
-        sommeDeltaViolet += deltaSkittleViolet[i];
-    }
-   // int PlusPetiteSomme = 0;
-   int baseColors[5] = {RED, GREEN, YELLOW, ORANGE, PURPLE};
-   int deltaColors[5] = {sommeDeltaRouge,
-                         sommeDeltaVert,
-                         sommeDeltaJaune,
-                         sommeDeltaOrange,
-                         sommeDeltaViolet};
+  //   //sommes des différences
+  //   int sommeDeltaRouge = 0, sommeDeltaVert = 0, sommeDeltaJaune = 0, sommeDeltaOrange = 0, sommeDeltaViolet = 0;
+  //   for (int i = 0; i < 3; i++) {
+  //       sommeDeltaRouge += deltaSkittleRouge[i];
+  //       sommeDeltaVert += deltaSkittleVert[i];
+  //       sommeDeltaJaune += deltaSkittleJaune[i];
+  //       sommeDeltaOrange += deltaSkittleOrange[i];
+  //       sommeDeltaViolet += deltaSkittleViolet[i];
+  //   }
+  //  // int PlusPetiteSomme = 0;
+  //  int deltaColors[5] = {sommeDeltaRouge,
+  //                        sommeDeltaVert,
+  //                        sommeDeltaJaune,
+  //                        sommeDeltaOrange,
+  //                        sommeDeltaViolet};
 
     int color = 0; // no color is set
     int lastDelta = 255*3; // max delta possible
     for (int i = 0; i < 5; i++) {
-      color = (deltaColors[i] < lastDelta) ? baseColors[i] : color;
-    }
+      color = (deltas[i] < lastDelta) ? baseColors[i] : color;
+    };
     return color;
 
     // if (sommeDeltaRouge <= sommeDeltaVert && sommeDeltaRouge <= sommeDeltaJaune && sommeDeltaRouge <= sommeDeltaOrange && sommeDeltaRouge <= sommeDeltaViolet){
