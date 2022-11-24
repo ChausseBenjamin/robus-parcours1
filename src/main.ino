@@ -19,6 +19,7 @@ Variables globales et defines
 // -> defines...
 // L'ensemble des fonctions y ont acces
 #define FUNNEL_MOTOR 43 // Digital IO
+#define SHAKE_TIME 3000 // how long the motor should shake the funnel
 
 
 /* ****************************************************************************
@@ -77,7 +78,7 @@ void Avancer(float distance) // distance : Distance à parcourir tout droit (cm)
 void shakeFunnel(){
   // send a digital signal to the funnel motor
   digitalWrite(FUNNEL_MOTOR, HIGH);
-  delay(3000);
+  delay(SHAKE_TIME);
   digitalWrite(FUNNEL_MOTOR, LOW);
 }
  
