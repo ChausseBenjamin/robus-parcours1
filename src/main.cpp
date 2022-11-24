@@ -148,10 +148,8 @@ int determinerCouleur() {
     };
     int colorTable[5][3] = {0};
     for (int i=0;i<3;i++) {
-      colorTable[0][i] = SKITTLEROUGE[i];
-      colorTable[1][i] = SKITTLEVERT[i];
-      colorTable[2][i] = SKITTLEJAUNE[i];
-      colorTable[3][i] = SKITTLEORANGE[i];
+      colorTable[0][i] = SKITTLEROUGE[i]; colorTable[1][i] = SKITTLEVERT[i];
+      colorTable[2][i] = SKITTLEJAUNE[i]; colorTable[3][i] = SKITTLEORANGE[i];
       colorTable[4][i] = SKITTLEVIOLET[i];
     }
     */
@@ -177,7 +175,12 @@ int determinerCouleur() {
     }
     */
 
-
+    int color = 0; // no color is set
+    int lastDelta = 255*3; // max delta possible
+    for (int i = 0; i < 5; i++) {
+      color = (deltas[i] < lastDelta) ? baseColors[i] : color;
+    };
+    return color;
 
     //différence avec skittle Rouge
     deltaSkittleRouge[0] =(SKITTLEROUGE[0]- ArrayMoyenne[0]);
@@ -214,6 +217,27 @@ int determinerCouleur() {
     deltaSkittleViolet[1] = abs(deltaSkittleViolet[1]);
     deltaSkittleViolet[2] = SKITTLEVIOLET[2]- ArrayMoyenne[2];
     deltaSkittleViolet[2] = abs(deltaSkittleViolet[2]);
+
+    // //différence avec skittle Rouge
+    // deltaSkittleRouge[0] = abs(SKITTLEROUGE[0]- *moyenneRouge);
+    // deltaSkittleRouge[1] = abs(SKITTLEROUGE[1]- *moyenneVert);
+    // deltaSkittleRouge[2] = abs(SKITTLEROUGE[2]- *moyenneBleu);
+    // //différence avec skittle Vert
+    // deltaSkittleVert[0] = abs(SKITTLEVERT[0]- *moyenneRouge);
+    // deltaSkittleVert[1] = abs(SKITTLEVERT[1]- *moyenneVert);
+    // deltaSkittleVert[2] = abs(SKITTLEVERT[2]- *moyenneBleu);
+    // //différence avec skittle Jaune
+    // deltaSkittleJaune[0] = abs(deltaSkittleJaune[0]- *moyenneRouge);
+    // deltaSkittleJaune[1] = abs(deltaSkittleJaune[1]- *moyenneVert);
+    // deltaSkittleJaune[2] = abs(deltaSkittleJaune[2]- *moyenneBleu);
+    // //différence avec skittle Orange
+    // deltaSkittleOrange[0] = abs(SKITTLEORANGE[0]- *moyenneRouge);
+    // deltaSkittleOrange[1] = abs(SKITTLEORANGE[1]- *moyenneVert);
+    // deltaSkittleOrange[2] = abs(SKITTLEORANGE[2]- *moyenneBleu);
+    // //différence avec skittle Violet
+    // deltaSkittleViolet[0] = abs(SKITTLEVIOLET[0]- *moyenneRouge);
+    // deltaSkittleViolet[1] = abs(SKITTLEVIOLET[1]- *moyenneVert);
+    // deltaSkittleViolet[2] = abs(SKITTLEVIOLET[2]- *moyenneBleu);
 
   //sommes des différences
   int sommeDeltaRouge = 0;
