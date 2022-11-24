@@ -156,17 +156,11 @@ int determinerCouleur() {
     Lecture();
     int baseColors[5] = {RED, GREEN, YELLOW, ORANGE, PURPLE};
     int deltas[5] = {0};
-    int averages[3] = {
-      *moyenneRouge,
-      *moyenneVert,
-      *moyenneBleu,
-    };
+    int averages[3] = { *moyenneRouge, *moyenneVert, *moyenneBleu };
     int colorTable[5][3] = {0};
     for (int i=0;i<3;i++) {
-      colorTable[0][i] = SKITTLEROUGE[i];
-      colorTable[1][i] = SKITTLEVERT[i];
-      colorTable[2][i] = SKITTLEJAUNE[i];
-      colorTable[3][i] = SKITTLEORANGE[i];
+      colorTable[0][i] = SKITTLEROUGE[i]; colorTable[1][i] = SKITTLEVERT[i];
+      colorTable[2][i] = SKITTLEJAUNE[i]; colorTable[3][i] = SKITTLEORANGE[i];
       colorTable[4][i] = SKITTLEVIOLET[i];
     }
 
@@ -189,7 +183,12 @@ int determinerCouleur() {
       deltas[i] = diff;
     }
 
-
+    int color = 0; // no color is set
+    int lastDelta = 255*3; // max delta possible
+    for (int i = 0; i < 5; i++) {
+      color = (deltas[i] < lastDelta) ? baseColors[i] : color;
+    };
+    return color;
 
     // //différence avec skittle Rouge
     // deltaSkittleRouge[0] = abs(SKITTLEROUGE[0]- *moyenneRouge);
@@ -227,13 +226,6 @@ int determinerCouleur() {
   //                        sommeDeltaJaune,
   //                        sommeDeltaOrange,
   //                        sommeDeltaViolet};
-
-    int color = 0; // no color is set
-    int lastDelta = 255*3; // max delta possible
-    for (int i = 0; i < 5; i++) {
-      color = (deltas[i] < lastDelta) ? baseColors[i] : color;
-    };
-    return color;
 
     // if (sommeDeltaRouge <= sommeDeltaVert && sommeDeltaRouge <= sommeDeltaJaune && sommeDeltaRouge <= sommeDeltaOrange && sommeDeltaRouge <= sommeDeltaViolet){
     //     Serial.println("Rouge");
