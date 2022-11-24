@@ -13,13 +13,12 @@ Inclure les librairies de functions que vous voulez utiliser
 #include <LibRobus.h> // Essentielle pour utiliser RobUS
 #include <stdio.h>
 
-
 /* ****************************************************************************
 Variables globales et defines
 **************************************************************************** */
 // -> defines...
 // L'ensemble des fonctions y ont acces
-
+#define FUNNEL_MOTOR 43 // Digital IO
 
 
 /* ****************************************************************************
@@ -73,6 +72,14 @@ void Avancer(float distance) // distance : Distance à parcourir tout droit (cm)
     pulseRealTotalDroit += ENCODER_ReadReset(RIGHT);
   }
 }
+
+// active un moteur de vibration pendant 3 secondes pour éviter que l'entonnoir ne se bloque
+void shakeFunnel(){
+  // send a digital signal to the funnel motor
+  digitalWrite(FUNNEL_MOTOR, HIGH);
+  delay(3000);
+  digitalWrite(FUNNEL_MOTOR, LOW);
+}
  
 
 
@@ -86,6 +93,8 @@ Fonctions d'initialisation (setup)
 
 void setup(){
   BoardInit();
+  // sets FUNNEL_MOTOR pin to pullup mode
+  pinMode(FUNNEL_MOTOR, INPUT_PULLUP); // XXX: Très important pour être capable de stopper le moteur de vibration
 }
 
 
