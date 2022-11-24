@@ -75,10 +75,10 @@ void Avancer(float distance) // distance : Distance à parcourir tout droit (cm)
 }
 
 // active un moteur de vibration pendant 3 secondes pour éviter que l'entonnoir ne se bloque
-void shakeFunnel(){
+void shakeFunnel(int ms){
   // send a digital signal to the funnel motor
   digitalWrite(FUNNEL_MOTOR, HIGH);
-  delay(SHAKE_TIME);
+  delay(ms);
   digitalWrite(FUNNEL_MOTOR, LOW);
 }
  
@@ -94,10 +94,10 @@ Fonctions d'initialisation (setup)
 
 void setup(){
   BoardInit();
-  // sets FUNNEL_MOTOR pin to pullup mode
-  pinMode(FUNNEL_MOTOR, INPUT_PULLUP); // XXX: Très important pour être capable de stopper le moteur de vibration
+  // sets FUNNEL_MOTOR as an output in digital mode set to LOW
+  pinMode(FUNNEL_MOTOR, OUTPUT); // XXX: Très important pour être capable de stopper le moteur de vibration
+  digitalWrite(FUNNEL_MOTOR, LOW);
 }
-
 
 /* ****************************************************************************
 Fonctions de boucle infini (loop())
@@ -106,9 +106,11 @@ Fonctions de boucle infini (loop())
 
   void loop() {
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
-  delay(10);// Delais pour décharger le CPU
-  Avancer(200);
-  while(1) {}
+  delay(3000);// Delais pour décharger le CPU
+  digitalWrite(FUNNEL_MOTOR, HIGH);
+  delay(3000);
+  digitalWrite(FUNNEL_MOTOR, LOW);
+
 
   //Test pour commit via VS Code
   //test
