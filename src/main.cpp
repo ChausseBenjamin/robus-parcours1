@@ -9,12 +9,11 @@
 // Pick analog outputs, for the UNO these three work well
 // use ~560  ohm resistor between Red & Blue, ~1K for green (its brighter)
 //constante des différentes couleurs des skittles
-#define GREEN 30
-#define YELLOW 22
-#define ORANGE 24
-#define PURPLE 28
-#define BLUE 23
-#define RED 21
+#define GREEN 1
+#define YELLOW 2
+#define ORANGE 3
+#define VIOLET 4
+#define RED 0
 // for a common anode LED, connect the common pin to +5V
 // for common cathode, connect the common to groundé
 // set to false if using a common cathode LED
@@ -33,11 +32,11 @@ int *moyenneRouge = NULL;
 int *moyenneVert = NULL;
 int *moyenneBleu = NULL;
 //valeurs RGB des différentes couleurs de skittles
-static const int SKITTLEROUGE[3]={255,0,0 };
-static const int SKITTLEVERT[3]={0,255,0};
-static const int SKITTLEJAUNE[3]={0,0,255};
-static const int SKITTLEORANGE[3]={255,69,0};
-static const int SKITTLEVIOLET[3]={128,0,0};
+static const int SKITTLEROUGE[3]={566,527,553};
+static const int SKITTLEVERT[3]={533,730,583};
+static const int SKITTLEJAUNE[3]={972,894,631};
+static const int SKITTLEORANGE[3]={839,591,562};
+static const int SKITTLEVIOLET[3]={430,505,530};
 int SkittleLu[3]; //tableau taille 3 pour les valeurs RGB du skittle lu
 
 //void turnoff();
@@ -65,11 +64,7 @@ void setup() {
         while (1); // halt!
     }
 
-    // use these three pins to drive an LED
-    pinMode(RED, OUTPUT);
-    pinMode(GREEN, OUTPUT);
-    pinMode(BLUE, OUTPUT);
-    pinMode(YELLOW, OUTPUT);
+
 
     // thanks PhilB for this gamma table!
     // it helps convert RGB colors to what humans see
@@ -89,15 +84,24 @@ void setup() {
 }
 
 
-void loop() {
-     MOTOR_SetSpeed(0,0);
+void loop() 
+{
+    delay(800);
+    //SERVO_SetAngle(0,0);
+    //delay(1500);
+    Serial.println("Entered in loop function");
+    int target = RED;
+    sortSkittle(target);
+    //SERVO_SetAngle(0,0);
+
+   /*  MOTOR_SetSpeed(0,0);
    MOTOR_SetSpeed(1,0);
     uint16_t clear, red, green, blue;
 
     delay(150);  // takes 50ms to read
 
     tcs.getRawData(&red, &green, &blue, &clear);
-
+    
     Serial.print("C:\t"); Serial.print(clear);
     Serial.print("\tR:\t"); Serial.print(red);
     Serial.print("\tG:\t"); Serial.print(green);
@@ -120,9 +124,8 @@ void loop() {
     void turnoff();
     //Serial.print((int)r ); Serial.print(" "); Serial.print((int)g);Serial.print(" ");  Serial.println((int)b );
 
-   /* analogWrite(redpin, gammatable[(int)r]);
-    analogWrite(greenpin, gammatable[(int)g]);
-    analogWrite(bluepin, gammatable[(int)b]);*/
+    */
+
 }
 
 
@@ -137,24 +140,32 @@ void Lecture() {
     for (int i = 0; i < 5; i++) {
         tcs.getRawData(&red, &green, &blue, &clear); //on lit
         totalRouge += red;
-        Serial.print(totalRouge);
+        Serial.print("Total rouge courant : ");
+        Serial.println(totalRouge);
         totalVert += green;
-        Serial.print(totalVert);
+        Serial.print("Total vert courant : ");
+        Serial.println(totalVert);
         totalBleu += blue;
-        Serial.print(totalBleu);
+        Serial.print("Total bleu courant : ");
+        Serial.println(totalBleu);
 
         delay(20);
     }
     *moyenneRouge = totalRouge/5;
     *moyenneVert = totalVert/5;
     *moyenneBleu = totalBleu/5;
-
+    Serial.print("Moyenne rouge est : ");
+    Serial.print(*moyenneRouge);
+    Serial.print("Moyenne vert est : ");
+    Serial.print(*moyenneVert);
+    Serial.print("Moyenne bleu est : ");
+    Serial.print(*moyenneBleu);
 }
 
 //détermine la couleur du skittle
 int determinerCouleur() {
     Lecture();
-    int baseColors[5] = {RED, GREEN, YELLOW, ORANGE, PURPLE};
+    int baseColors[5] = {RED, GREEN, YELLOW, ORANGE, VIOLET};
     int deltas[5] = {0};
     int averages[3] = {
       *moyenneRouge,
@@ -171,19 +182,19 @@ int determinerCouleur() {
     }
 
     //on déclare des tableaux pour les différences de valeurs RGB
-    int deltaSkittleRouge[3];
+    /*int deltaSkittleRouge[3];
     int deltaSkittleVert[3];
     int deltaSkittleJaune[3];
     int deltaSkittleOrange[3];
     int deltaSkittleViolet[3];
-
+*/
     //trouvons la différence entre les valeurs RGB des différents skittles et les valeurs RGB lues
 
     int diff;
     for (int i=0;i<5;i++){
       for (int j=0;j<3;j++){
         diff = 0;
-        diff += averages[i] - colorTable[i][j];
+        diff += averages[j] - colorTable[i][j];
         diff = abs(diff);
       }
       deltas[i] = diff;
@@ -256,39 +267,63 @@ int determinerCouleur() {
     // }
 }
 
-void sortSkittle(int target){
+void sortSkittle(int target)
+{
   // Vérifier quelle est la bonne fonction pour le controlleur
-  SERVO_SetAngle(SERVO_SORT, SORT_SENSOR);
+  delay(100);
+  SERVO_SetAngle(0, 90);
   int color = determinerCouleur();
-  char colorName[10];
-  switch (color) {
+  Serial.print("Color is : ");
+  Serial.print(color);
+  Serial.print("\n");
+  if (color == RED)
+  {
+    Serial.println("Skittle is Red");
+  }
+  if (color == GREEN)
+  {
+    Serial.println("Skittle is Green");
+  }
+  if (color == YELLOW)
+  {
+    Serial.println("Skittle is Yellow");
+  }
+  if (color == ORANGE)
+  {
+    Serial.println("Skittle is Orange");
+  }
+  if (color == VIOLET)
+  {
+    Serial.println("Skittle is Violet");
+  }
+  /*switch (color) {
   case GREEN:
-    strcpy(colorName, "Vert");
+    Serial.println("Skittle is Green");
     break;
   case ORANGE:
-    strcpy(colorName, "Orange");
+    Serial.println("Skittle is Orange");
     break;
-  case PURPLE:
-    strcpy(colorName, "Violet");
+  case VIOLET:
+    Serial.println("Skittle is Violet");
     break;
   case RED:
-    strcpy(colorName, "Rouge");
+    Serial.println("Skittle is Rouge");
     break;
   case YELLOW:
-    strcpy(colorName, "Jaune");
+    Serial.println("Skittle is Jaune");
     break;
   default:
-    strcpy(colorName, "INCONNUE");
+    Serial.println("Skittle is INCONNUE");
     break;
-  }
-  Serial.print("Skittle is: ");
-  Serial.println(colorName);
+  }*/
+  delay(1000);
   if(color == target){
-    SERVO_SetAngle(SERVO_SORT, SORT_TARGET);
+    SERVO_SetAngle(0, 180);
   } else {
-    SERVO_SetAngle(SERVO_SORT, SORT_TRASH);
+    SERVO_SetAngle(0, 0);
   }
-  SERVO_SetAngle(SERVO_SORT, SORT_SENSOR);
+  delay(1000);
+  SERVO_SetAngle(0, 90);
 }
 
 
