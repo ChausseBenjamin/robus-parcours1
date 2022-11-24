@@ -28,13 +28,6 @@
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
 //initialise des pointeurs de moyenne des couleurs
-/*
-struct RGB {
-  int R = 0;
-  int G = 0;
-  int B = 0;
-} lecture1, lecture2, lecture3, lecture4, lecture5;
-*/
 
 int moyenneRouge = 0;
 int moyenneVert = 0;
@@ -138,21 +131,7 @@ void Lecture() {
 //détermine la couleur du skittle
 int determinerCouleur() {
     Lecture();
-    /*
-    int baseColors[5] = {RED, GREEN, YELLOW, ORANGE, VIOLET};
-    int deltas[5] = {0};
-    int averages[3] = {
-      moyenneRouge,
-      moyenneVert,
-      moyenneBleu,
-    };
-    int colorTable[5][3] = {0};
-    for (int i=0;i<3;i++) {
-      colorTable[0][i] = SKITTLEROUGE[i]; colorTable[1][i] = SKITTLEVERT[i];
-      colorTable[2][i] = SKITTLEJAUNE[i]; colorTable[3][i] = SKITTLEORANGE[i];
-      colorTable[4][i] = SKITTLEVIOLET[i];
-    }
-    */
+
 
     //on déclare des tableaux pour les différences de valeurs RGB
     int deltaSkittleRouge[3];
@@ -162,26 +141,6 @@ int determinerCouleur() {
     int deltaSkittleViolet[3];
 
     //trouvons la différence entre les valeurs RGB des différents skittles et les valeurs RGB lues
-
-    /*
-    int diff;
-    for (int i=0;i<5;i++){
-      for (int j=0;j<3;j++){
-        diff = 0;
-        diff += averages[j] - colorTable[i][j];VIOLET
-        diff = abs(diff);
-      }
-      deltas[i] = diff;
-    }
-    */
-
-    int color = 0; // no color is set
-    int lastDelta = 255*3; // max delta possible
-    for (int i = 0; i < 5; i++) {
-      color = (deltas[i] < lastDelta) ? baseColors[i] : color;
-    };
-    return color;
-
     //différence avec skittle Rouge
     deltaSkittleRouge[0] =(SKITTLEROUGE[0]- ArrayMoyenne[0]);
     deltaSkittleRouge[0] = abs(deltaSkittleRouge[0]);
@@ -218,27 +177,6 @@ int determinerCouleur() {
     deltaSkittleViolet[2] = SKITTLEVIOLET[2]- ArrayMoyenne[2];
     deltaSkittleViolet[2] = abs(deltaSkittleViolet[2]);
 
-    // //différence avec skittle Rouge
-    // deltaSkittleRouge[0] = abs(SKITTLEROUGE[0]- *moyenneRouge);
-    // deltaSkittleRouge[1] = abs(SKITTLEROUGE[1]- *moyenneVert);
-    // deltaSkittleRouge[2] = abs(SKITTLEROUGE[2]- *moyenneBleu);
-    // //différence avec skittle Vert
-    // deltaSkittleVert[0] = abs(SKITTLEVERT[0]- *moyenneRouge);
-    // deltaSkittleVert[1] = abs(SKITTLEVERT[1]- *moyenneVert);
-    // deltaSkittleVert[2] = abs(SKITTLEVERT[2]- *moyenneBleu);
-    // //différence avec skittle Jaune
-    // deltaSkittleJaune[0] = abs(deltaSkittleJaune[0]- *moyenneRouge);
-    // deltaSkittleJaune[1] = abs(deltaSkittleJaune[1]- *moyenneVert);
-    // deltaSkittleJaune[2] = abs(deltaSkittleJaune[2]- *moyenneBleu);
-    // //différence avec skittle Orange
-    // deltaSkittleOrange[0] = abs(SKITTLEORANGE[0]- *moyenneRouge);
-    // deltaSkittleOrange[1] = abs(SKITTLEORANGE[1]- *moyenneVert);
-    // deltaSkittleOrange[2] = abs(SKITTLEORANGE[2]- *moyenneBleu);
-    // //différence avec skittle Violet
-    // deltaSkittleViolet[0] = abs(SKITTLEVIOLET[0]- *moyenneRouge);
-    // deltaSkittleViolet[1] = abs(SKITTLEVIOLET[1]- *moyenneVert);
-    // deltaSkittleViolet[2] = abs(SKITTLEVIOLET[2]- *moyenneBleu);
-
   //sommes des différences
   int sommeDeltaRouge = 0;
   int sommeDeltaVert = 0;
@@ -252,23 +190,6 @@ int determinerCouleur() {
      sommeDeltaOrange += deltaSkittleOrange[i];
      sommeDeltaViolet += deltaSkittleViolet[i];
     }
- /*int deltaColors[5] = {sommeDeltaRouge,
-                       sommeDeltaVert,
-                       sommeDeltaJaune,
-                       sommeDeltaOrange,
-                       sommeDeltaViolet};*/
-
-    /*
-    int color = 0; // no color is set
-    int lastDelta = 1024*3; // max delta possible
-    for (int i = 0; i < 5; i++) {
-      if (deltas[i] <lastDelta){
-        color = baseColors[i];
-        lastDelta = deltas[i];
-      }
-    };
-    return color;
-    */
 
     if (sommeDeltaRouge <= sommeDeltaVert && sommeDeltaRouge <= sommeDeltaJaune && sommeDeltaRouge <= sommeDeltaOrange && sommeDeltaRouge <= sommeDeltaViolet){
         Serial.println("Rouge");
