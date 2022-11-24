@@ -4,6 +4,7 @@
 #include <SPI.h>
 #include<LibRobus.h>
 #include <math.h>
+#include <string.h>
 
 // Pick analog outputs, for the UNO these three work well
 // use ~560  ohm resistor between Red & Blue, ~1K for green (its brighter)
@@ -13,7 +14,7 @@
 #define ORANGE 24
 #define PURPLE 28
 #define BLUE 23
-# define RED 21
+#define RED 21
 // for a common anode LED, connect the common pin to +5V
 // for common cathode, connect the common to groundé
 // set to false if using a common cathode LED
@@ -158,26 +159,36 @@ int determinerCouleur() {
     int deltaSkittleOrange[3];
     int deltaSkittleViolet[3];
     //trouvons la différence entre les valeurs RGB des différents skittles et les valeurs RGB lues
-    //différence avec skittle Rouge
-    deltaSkittleRouge[0] = abs(SKITTLEROUGE[0]- *moyenneRouge);
-    deltaSkittleRouge[1] = abs(SKITTLEROUGE[1]- *moyenneVert);
-    deltaSkittleRouge[2] = abs(SKITTLEROUGE[2]- *moyenneBleu);
-    //différence avec skittle Vert
-    deltaSkittleVert[0] = abs(SKITTLEVERT[0]- *moyenneRouge);
-    deltaSkittleVert[1] = abs(SKITTLEVERT[1]- *moyenneVert);
-    deltaSkittleVert[2] = abs(SKITTLEVERT[2]- *moyenneBleu);
-    //différence avec skittle Jaune
-    deltaSkittleJaune[0] = abs(deltaSkittleJaune[0]- *moyenneRouge);
-    deltaSkittleJaune[1] = abs(deltaSkittleJaune[1]- *moyenneVert);
-    deltaSkittleJaune[2] = abs(deltaSkittleJaune[2]- *moyenneBleu);
-    //différence avec skittle Orange
-    deltaSkittleOrange[0] = abs(SKITTLEORANGE[0]- *moyenneRouge);
-    deltaSkittleOrange[1] = abs(SKITTLEORANGE[1]- *moyenneVert);
-    deltaSkittleOrange[2] = abs(SKITTLEORANGE[2]- *moyenneBleu);
-    //différence avec skittle Violet
-    deltaSkittleViolet[0] = abs(SKITTLEVIOLET[0]- *moyenneRouge);
-    deltaSkittleViolet[1] = abs(SKITTLEVIOLET[1]- *moyenneVert);
-    deltaSkittleViolet[2] = abs(SKITTLEVIOLET[2]- *moyenneBleu);
+
+    for (int i = 0; i < 3; i++) {
+        deltaSkittleRouge[i] = abs(SKITTLEROUGE[i] - *moyenneRouge);
+        deltaSkittleVert[i] = abs(SKITTLEVERT[i] - *moyenneVert);
+        deltaSkittleJaune[i] = abs(SKITTLEBLEU[i] - *moyenneBleu);
+        deltaSkittleOrange[i] = abs(SKITTLEORANGE[i] - *moyenneRouge);
+        deltaSkittleViolet[i] = abs(SKITTLEVIOLET[i] - *moyenneBleu);
+    }
+
+    // //différence avec skittle Rouge
+    // deltaSkittleRouge[0] = abs(SKITTLEROUGE[0]- *moyenneRouge);
+    // deltaSkittleRouge[1] = abs(SKITTLEROUGE[1]- *moyenneVert);
+    // deltaSkittleRouge[2] = abs(SKITTLEROUGE[2]- *moyenneBleu);
+    // //différence avec skittle Vert
+    // deltaSkittleVert[0] = abs(SKITTLEVERT[0]- *moyenneRouge);
+    // deltaSkittleVert[1] = abs(SKITTLEVERT[1]- *moyenneVert);
+    // deltaSkittleVert[2] = abs(SKITTLEVERT[2]- *moyenneBleu);
+    // //différence avec skittle Jaune
+    // deltaSkittleJaune[0] = abs(deltaSkittleJaune[0]- *moyenneRouge);
+    // deltaSkittleJaune[1] = abs(deltaSkittleJaune[1]- *moyenneVert);
+    // deltaSkittleJaune[2] = abs(deltaSkittleJaune[2]- *moyenneBleu);
+    // //différence avec skittle Orange
+    // deltaSkittleOrange[0] = abs(SKITTLEORANGE[0]- *moyenneRouge);
+    // deltaSkittleOrange[1] = abs(SKITTLEORANGE[1]- *moyenneVert);
+    // deltaSkittleOrange[2] = abs(SKITTLEORANGE[2]- *moyenneBleu);
+    // //différence avec skittle Violet
+    // deltaSkittleViolet[0] = abs(SKITTLEVIOLET[0]- *moyenneRouge);
+    // deltaSkittleViolet[1] = abs(SKITTLEVIOLET[1]- *moyenneVert);
+    // deltaSkittleViolet[2] = abs(SKITTLEVIOLET[2]- *moyenneBleu);
+
     //sommes des différences
     int sommeDeltaRouge = 0, sommeDeltaVert = 0, sommeDeltaJaune = 0, sommeDeltaOrange = 0, sommeDeltaViolet = 0;
     for (int i = 0; i < 3; i++) {
@@ -188,52 +199,68 @@ int determinerCouleur() {
         sommeDeltaViolet += deltaSkittleViolet[i];
     }
    // int PlusPetiteSomme = 0;
-    if (sommeDeltaRouge <= sommeDeltaVert && sommeDeltaRouge <= sommeDeltaJaune && sommeDeltaRouge <= sommeDeltaOrange && sommeDeltaRouge <= sommeDeltaViolet){
-        Serial.println("Rouge");
-        return RED;
+   int baseColors[5] = {RED, GREEN, YELLOW, ORANGE, PURPLE};
+   int deltaColors[5] = {sommeDeltaRouge,
+                         sommeDeltaVert,
+                         sommeDeltaJaune,
+                         sommeDeltaOrange,
+                         sommeDeltaViolet};
+
+    int color = 0; // no color is set
+    int lastDelta = 255*3; // max delta possible
+    for (int i = 0; i < 5; i++) {
+      color = (deltaColors[i] < lastDelta) ? baseColors[i] : color;
     }
-    else if (sommeDeltaVert <= sommeDeltaJaune && sommeDeltaVert <= sommeDeltaOrange && sommeDeltaVert <= sommeDeltaViolet) {
-        Serial.println("Vert");
-        return GREEN;
-    }
-    else if (sommeDeltaJaune <= sommeDeltaOrange && sommeDeltaJaune <= sommeDeltaViolet) {
-        Serial.println("Jaune");
-        return YELLOW;
-    }
-    else if (sommeDeltaOrange <= sommeDeltaViolet) {
-        Serial.println("Orange");
-        return ORANGE;
-    }
-    else {
-        Serial.println("Violet");
-        return PURPLE;
-    }
+    return color;
+
+    // if (sommeDeltaRouge <= sommeDeltaVert && sommeDeltaRouge <= sommeDeltaJaune && sommeDeltaRouge <= sommeDeltaOrange && sommeDeltaRouge <= sommeDeltaViolet){
+    //     Serial.println("Rouge");
+    //     return RED;
+    // }
+    // else if (sommeDeltaVert <= sommeDeltaJaune && sommeDeltaVert <= sommeDeltaOrange && sommeDeltaVert <= sommeDeltaViolet) {
+    //     Serial.println("Vert");
+    //     return GREEN;}
+    // else if (sommeDeltaJaune <= sommeDeltaOrange && sommeDeltaJaune <= sommeDeltaViolet) {
+    //     Serial.println("Jaune");
+    //     return YELLOW;
+    // }
+    // else if (sommeDeltaOrange <= sommeDeltaViolet) {
+    //     Serial.println("Orange");
+    //     return ORANGE;
+    // }
+    // else {
+    //     Serial.println("Violet");
+    //     return PURPLE;
+    // }
 }
 
 void sortSkittle(int target){
   // Vérifier quelle est la bonne fonction pour le controlleur
   SERVO_SetAngle(SERVO_SORT, SORT_SENSOR);
   int color = determinerCouleur();
+  char colorName[10];
   switch (color) {
   case GREEN:
-    Serial.println("Couleur détectée: Vert");
+    strcpy(colorName, "Vert");
     break;
   case ORANGE:
-    Serial.println("Couleur détectée: Orange");
+    strcpy(colorName, "Orange");
     break;
   case PURPLE:
-    Serial.println("Couleur détectée: Violet");
+    strcpy(colorName, "Violet");
     break;
   case RED:
-    Serial.println("Couleur détectée: Rouge");
+    strcpy(colorName, "Rouge");
     break;
   case YELLOW:
-    Serial.println("Couleur détectée: Jaune");
+    strcpy(colorName, "Jaune");
     break;
   default:
-    Serial.println("Couleur détectée: Inconnue");
+    strcpy(colorName, "INCONNUE");
     break;
   }
+  Serial.print("Skittle is: ");
+  Serial.println(colorName);
   if(color == target){
     SERVO_SetAngle(SERVO_SORT, SORT_TARGET);
   } else {
