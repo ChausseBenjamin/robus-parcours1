@@ -6,6 +6,12 @@
 #include <math.h>
 #include <string.h>
 
+//définition des pins
+#define BOUTONROUGE  2
+#define BOUTONORANGE 3
+#define BOUTONJAUNE  4
+#define BOUTONVERT   7
+#define BOUTOMAUVE   8 
 #define VIBRATOR_PIN 43
 
 // Pick analog outputs, for the UNO these three work well
@@ -28,6 +34,9 @@
 #define SORT_TARGET 0   // TODO: vérifier si l'angle du servo est le bon
 #define SORT_TRASH  180 // TODO: vérifier si l'angle du servo est le bon
 #define SORT_SENSOR 90  // TODO: vérifier si l'angle du servo est le bon
+
+// function prototypes
+int choix_de_couleur();
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
@@ -363,3 +372,70 @@ void loop()
 
 
 
+int choix_de_couleur(){
+  int val = 0;
+  int state = LOW;
+  
+  val = digitalRead(BOUTONROUGE);
+
+  if (val==1)
+  { 
+    state =! state;
+    if (state == HIGH)
+    {
+      Serial.print("ROUGE");
+      return RED;
+    }
+  }
+
+  val = digitalRead(BOUTONORANGE);
+  if (val==1)
+  {
+    state =! state;
+    if (state == HIGH)
+    {
+      Serial.print("ORANGE");
+      return ORANGE;
+    }
+  }
+
+
+  val = digitalRead(BOUTONJAUNE);
+  if (val==1)
+  {
+    state =! state;
+    if (state == HIGH)
+    {
+      Serial.print("JAUNE");
+      return YELLOW;
+    }
+  }
+
+
+  val = digitalRead(BOUTONVERT);
+  if (val==1)
+  {
+    state =! state;
+    if (state == HIGH)
+    {
+      Serial.print("VERT");
+      return GREEN;
+    }
+  }
+
+
+  val = digitalRead(BOUTOMAUVE);
+  if (val==1)
+  {
+    state =! state;
+    if (state == HIGH)
+    {
+      Serial.print("MAUVE");
+      return VIOLET;
+    }
+  }
+
+  delay(20);
+  
+
+}
