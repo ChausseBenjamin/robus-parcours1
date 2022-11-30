@@ -19,6 +19,7 @@ Variables globales et defines
 // -> defines...
 // L'ensemble des fonctions y ont acces
 #define FUNNEL_MOTOR 43 // Digital IO
+#define BROOM_MOTOR 42 // Digital IO
 #define SHAKE_TIME 3000 // how long the motor should shake the funnel
 
 
@@ -81,45 +82,25 @@ void shakeFunnel(int ms){
   delay(ms);
   digitalWrite(FUNNEL_MOTOR, LOW);
 }
- 
-
-
-
-/* ****************************************************************************
-Fonctions d'initialisation (setup)
-**************************************************************************** */
-// -> Se fait appeler au debut du programme
-// -> Se fait appeler seulement un fois
-// -> Generalement on y initilise les varibbles globales
 
 void setup(){
   BoardInit();
   // sets FUNNEL_MOTOR as an output in digital mode set to LOW
   pinMode(FUNNEL_MOTOR, OUTPUT); // XXX: Très important pour être capable de stopper le moteur de vibration
+  pinMode(BROOM_MOTOR, OUTPUT); // XXX: Très important pour être capable de stopper le moteur de vibration
   digitalWrite(FUNNEL_MOTOR, LOW);
+  digitalWrite(BROOM_MOTOR, LOW);
 }
-
-/* ****************************************************************************
-Fonctions de boucle infini (loop())
-**************************************************************************** */
-// -> Se fait appeler perpetuellement suite au "setup"
 
   void loop() {
   // SOFT_TIMER_Update(); // A decommenter pour utiliser des compteurs logiciels
   delay(3000);// Delais pour décharger le CPU
   digitalWrite(FUNNEL_MOTOR, HIGH);
+  digitalWrite(BROOM_MOTOR, LOW);
   delay(3000);
   digitalWrite(FUNNEL_MOTOR, LOW);
+  digitalWrite(BROOM_MOTOR, HIGH);
 
 
-  //Test pour commit via VS Code
-  //test
-  //test ann-sosdfsdf 2222222
-
-  //comment
-  /*
-
-
-  */
 }
 
