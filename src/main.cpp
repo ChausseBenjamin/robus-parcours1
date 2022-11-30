@@ -36,7 +36,7 @@
 #define SORT_SENSOR 90  // TODO: vérifier si l'angle du servo est le bon
 
 // function prototypes
-int choix_de_couleur();
+int choix_de_couleur_boutons();
 
 // our RGB -> eye-recognized gamma color
 byte gammatable[256];
@@ -372,7 +372,7 @@ void loop()
 
 
 
-int choix_de_couleur(){
+int choix_de_couleur_bouton(){
   int val = 0;
   int state = LOW;
   
