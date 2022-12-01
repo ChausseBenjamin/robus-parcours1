@@ -385,6 +385,7 @@ void loop()
     //Serial.println(choix_bouton);
   }
   // SERVO_SetAngle(0, 85);
+  monter_recipient();
   do
   {
     sortSkittle(choix_bouton);
