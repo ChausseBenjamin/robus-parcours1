@@ -6,12 +6,12 @@
 #include <math.h>
 #include <string.h>
 
-//définition des pins
-#define BOUTONROUGE  2
+// définition des pins
+#define BOUTONROUGE 2
 #define BOUTONORANGE 3
-#define BOUTONJAUNE  4
-#define BOUTONVERT   7
-#define BOUTOMAUVE   8 
+#define BOUTONJAUNE 9
+#define BOUTONVERT 10
+#define BOUTOMAUVE 8
 #define VIBRATOR_PIN 43
 
 // Pick analog outputs, for the UNO these three work well
@@ -145,24 +145,11 @@ void Lecture()
   Serial.print("Total bleu courant : ");
   Serial.println(totalBleu);
 
-  //delay(20);
+  // delay(20);
 
-  /*Serial.print("Grand total rouge : ");
-  Serial.println(totalRouge);
-  Serial.print("Grand total vert : ");
-  Serial.println(totalVert);
-  Serial.print("Grand total bleu : ");
-  Serial.println(totalBleu);*/
-
-  /*ArrayMoyenne[0] = totalRouge / 10;
+  ArrayMoyenne[0] = totalRouge / 10;
   ArrayMoyenne[1] = totalVert / 10;
   ArrayMoyenne[2] = totalBleu / 10;
-  Serial.print("Moyenne rouge est : ");
-  Serial.println(ArrayMoyenne[0]);
-  Serial.print("Moyenne vert est : ");
-  Serial.println(ArrayMoyenne[1]);
-  Serial.print("Moyenne bleu est : ");
-  Serial.println(ArrayMoyenne[2]);*/
 }
 
 // détermine la couleur du skittle
@@ -327,16 +314,13 @@ int determinerCouleur()
 
     closestColor = VIOLET;
   }
-  Serial.println("Choisie 8/10");
-  Serial.println(closestColor);
-  Serial.print("\n");
   return closestColor;
 }
 
 void sortSkittle(int target)
 {
   // Vérifier quelle est la bonne fonction pour le controlleur
-  //delay(150);
+  // delay(150);
   SERVO_SetAngle(0, 85);
   int color = determinerCouleur();
   Serial.print("Color is : ");
@@ -361,26 +345,7 @@ void sortSkittle(int target)
   {
     Serial.println("\nSkittle is Violet\n\n");
   }
-  /*switch (color) {
-  case GREEN:
-    Serial.println("Skittle is Green");
-    break;
-  case ORANGE:
-    Serial.println("Skittle is Orange");
-    break;
-  case VIOLET:
-    Serial.println("Skittle is Violet");
-    break;
-  case RED:
-    Serial.println("Skittle is Rouge");
-    break;
-  case YELLOW:
-    Serial.println("Skittle is Jaune");
-    break;
-  default:
-    Serial.println("Skittle is INCONNUE");
-    break;
-  }*/
+
   delay(200);
   digitalWrite(VIBRATOR_PIN, HIGH);
   if (color == target)
@@ -400,124 +365,87 @@ void loop()
 {
   delay(1500);
   Serial.println("Entered in loop function");
+  int choix_bouton = COULEUR_RIEN_PANTOUTE;
+  while (choix_bouton == COULEUR_RIEN_PANTOUTE)
+  //while(true)
+  {
+    choix_bouton = choix_de_couleur_boutons();
+    //Serial.println(choix_bouton);
+  }
   // SERVO_SetAngle(0, 85);
   do
   {
-    sortSkittle(ORANGE);
+    sortSkittle(choix_bouton);
   } while (determinerCouleur() != COULEUR_RIEN_PANTOUTE);
   while (1)
   {
   };
-  // SERVO_SetAngle(0,0);
-
-  /*  MOTOR_SetSpeed(0,0);
-  MOTOR_SetSpeed(1,0);
-   uint16_t clear, red, green, blue;
-
-   delay(150);  // takes 50ms to read
-
-   tcs.getRawData(&red, &green, &blue, &clear);
-
-   Serial.print("C:\t"); Serial.print(clear);
-   Serial.print("\tR:\t"); Serial.print(red);
-   Serial.print("\tG:\t"); Serial.print(green);
-   Serial.print("\tB:\t"); Serial.print(blue);
-
-   // Figure out some basic hex code for visualization
-
-   //uint32_t sum = clear;
-   float r, g, b;
-   r = red;// r /= sum;
-   g = green;// g /= sum;
-   b = blue; //b /= sum;
-   // r *= 256; g *= 256; b *= 256;
-   Serial.print("\t");
-   Serial.print((int)r, HEX);
-   Serial.print((int)g, HEX);
-   Serial.print((int)b, HEX);
-   Serial.println();
-   //color(red,blue,green);
-   void turnoff();
-   //Serial.print((int)r ); Serial.print(" "); Serial.print((int)g);Serial.print(" ");  Serial.println((int)b );
-
-   */
+  
 }
 
-/* void turnoff()
- {
-     digitalWrite(RED,LOW);
-     digitalWrite(GREEN,LOW);
-     digitalWrite(BLUE,LOW);
-     digitalWrite(YELLOW,LOW);
-
- }*/
-
-
-
-int choix_de_couleur_boutons(){
+int choix_de_couleur_boutons()
+{
   int val = 0;
   int state = LOW;
-  
+
   val = digitalRead(BOUTONROUGE);
 
-  if (val==1)
-  { 
-    state =! state;
+  if (val == 1)
+  {
+    state = !state;
     if (state == HIGH)
     {
-      Serial.print("ROUGE");
+      Serial.print("BOUTON ROUGE");
       return RED;
     }
   }
 
   val = digitalRead(BOUTONORANGE);
-  if (val==1)
+  if (val == 1)
   {
-    state =! state;
+    state = !state;
     if (state == HIGH)
     {
-      Serial.print("ORANGE");
+      Serial.print("BOUTON ORANGE");
       return ORANGE;
     }
   }
 
-
   val = digitalRead(BOUTONJAUNE);
-  if (val==1)
+  if (val == 1)
   {
-    state =! state;
+    state = !state;
     if (state == HIGH)
     {
-      Serial.print("JAUNE");
+      Serial.print("BOUTON JAUNE");
       return YELLOW;
     }
   }
 
-
   val = digitalRead(BOUTONVERT);
-  if (val==1)
+  if (val == 1)
   {
-    state =! state;
+    state = !state;
     if (state == HIGH)
     {
-      Serial.print("VERT");
+      Serial.print("BOUTON VERT");
       return GREEN;
     }
   }
 
-
   val = digitalRead(BOUTOMAUVE);
-  if (val==1)
+  if (val == 1)
   {
-    state =! state;
+    state = !state;
     if (state == HIGH)
     {
-      Serial.print("MAUVE");
+      Serial.print("BOUTON MAUVE");
       return VIOLET;
     }
   }
+  return COULEUR_RIEN_PANTOUTE;
 
   delay(20);
-  
+
 
 }
