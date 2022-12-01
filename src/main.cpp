@@ -66,6 +66,7 @@ int determinerCouleur();
 void sortSkittle(int target);
 
 void setup() {
+    pinMode(VIBRATOR_PIN,OUTPUT);
     Serial.begin(9600);
     BoardInit();
     MOTOR_SetSpeed(0,0);
@@ -313,64 +314,32 @@ void sortSkittle(int target)
   SERVO_SetAngle(0, 85);
 }
 
-
+void monter_recipient()
+{
+  delay(10);
+  SERVO_SetAngle(1, 130);
+  delay(1000);
+  digitalWrite(VIBRATOR_PIN,HIGH);
+  delay(2000);
+  digitalWrite(VIBRATOR_PIN,LOW);
+  delay(4000);
+  SERVO_SetAngle(1, 0);
+}
 void loop() 
 {
-    delay(1500);
+    delay(10);
+    monter_recipient();
     Serial.println("Entered in loop function");
-    //SERVO_SetAngle(0, 85);
+    delay(1000);
     do
     {
       sortSkittle(ORANGE);
     } while (determinerCouleur() != COULEUR_RIEN_PANTOUTE);
     while(1){};
-    //SERVO_SetAngle(0,0);
-
-   /*  MOTOR_SetSpeed(0,0);
-   MOTOR_SetSpeed(1,0);
-    uint16_t clear, red, green, blue;
-
-    delay(150);  // takes 50ms to read
-
-    tcs.getRawData(&red, &green, &blue, &clear);
     
-    Serial.print("C:\t"); Serial.print(clear);
-    Serial.print("\tR:\t"); Serial.print(red);
-    Serial.print("\tG:\t"); Serial.print(green);
-    Serial.print("\tB:\t"); Serial.print(blue);
-
-    // Figure out some basic hex code for visualization
-
-    //uint32_t sum = clear;
-    float r, g, b;
-    r = red;// r /= sum;
-    g = green;// g /= sum;
-    b = blue; //b /= sum;
-    // r *= 256; g *= 256; b *= 256;
-    Serial.print("\t");
-    Serial.print((int)r, HEX);
-    Serial.print((int)g, HEX);
-    Serial.print((int)b, HEX);
-    Serial.println();
-    //color(red,blue,green);
+    
     void turnoff();
-    //Serial.print((int)r ); Serial.print(" "); Serial.print((int)g);Serial.print(" ");  Serial.println((int)b );
-
-    */
-
-}
-
-
-   /* void turnoff()
-    {
-        digitalWrite(RED,LOW);
-        digitalWrite(GREEN,LOW);
-        digitalWrite(BLUE,LOW);
-        digitalWrite(YELLOW,LOW);
-
-    }*/
-
-
+}    
 
 int choix_de_couleur(){
   int val = 0;
