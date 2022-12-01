@@ -5,13 +5,16 @@
 #include <LibRobus.h>
 #include <math.h>
 #include <string.h>
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
 // définition des pins
-#define BOUTONROUGE 2
-#define BOUTONORANGE 3
-#define BOUTONJAUNE 9
-#define BOUTONVERT 10
-#define BOUTOMAUVE 8
+#define BOUTONROUGE A1
+#define BOUTONORANGE A2
+#define BOUTONJAUNE A3
+#define BOUTONVERT A4
+#define BOUTOMAUVE A5
 #define VIBRATOR_PIN 43
 
 // Pick analog outputs, for the UNO these three work well
@@ -63,6 +66,17 @@ static const int SKITTLEVIOLET[3] = {115, 129, 135};
 static const int RIEN_PANTOUTE[3] = {143, 164, 164};
 int SkittleLu[3]; // tableau taille 3 pour les valeurs RGB du skittle lu
 
+/*byte smile[8] = {
+    0b00000,
+    0b00000,
+    0b01010,
+    0b00000,
+    0b10001,
+    0b01110,
+    0b00000,
+    0b00000
+};*/
+
 // void turnoff();
 
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
@@ -71,47 +85,6 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS3472
 void lecture();
 int determinerCouleur();
 void sortSkittle(int target);
-
-void setup()
-{
-  Serial.begin(9600);
-  BoardInit();
-  MOTOR_SetSpeed(0, 0);
-  MOTOR_SetSpeed(1, 0);
-  Serial.println("Color View Test!");
-
-  if (tcs.begin())
-  {
-    Serial.println("Found sensor");
-    tcs.setInterrupt(false); // turn on LED
-  }
-  else
-  {
-    Serial.println("No TCS34725 found ... check your connections");
-    while (1)
-      ; // halt!
-  }
-
-  // thanks PhilB for this gamma table!
-  // it helps convert RGB colors to what humans see
-  for (int i = 0; i < 256; i++)
-  {
-    float x = i;
-    x /= 255;
-    x = pow(x, 2.5);
-    x *= 255;
-
-    if (commonAnode)
-    {
-      gammatable[i] = 255 - x;
-    }
-    else
-    {
-      gammatable[i] = x;
-    }
-    // Serial.println(gammatable[i]);
-  }
-}
 
 // fonction qui lit la couleur d'un skittle avec une moyenne de cinq lectures
 void Lecture()
@@ -361,26 +334,160 @@ void sortSkittle(int target)
   SERVO_SetAngle(0, 85);
 }
 
+void setup()
+{
+  Serial.begin(9600);
+  BoardInit();
+  MOTOR_SetSpeed(0, 0);
+  MOTOR_SetSpeed(1, 0);
+  lcd.begin(16, 2);
+  Serial.println("Color View Test!");
+
+  /*if (tcs.begin())
+  {
+    Serial.println("Found sensor");
+    tcs.setInterrupt(false); // turn on LED
+  }
+  else
+  {
+    Serial.println("No TCS34725 found ... check your connections");
+    while (1)
+      ; // halt!
+  }*/
+
+  // thanks PhilB for this gamma table!
+  // it helps convert RGB colors to what humans see
+  for (int i = 0; i < 256; i++)
+  {
+    float x = i;
+    x /= 255;
+    x = pow(x, 2.5);
+    x *= 255;
+
+    if (commonAnode)
+    {
+      gammatable[i] = 255 - x;
+    }
+    else
+    {
+      gammatable[i] = x;
+    }
+    // Serial.println(gammatable[i]);
+  }
+}
+
+// Weird visual bugs
+/*void printLCD(const char * row1, const char * row2)
+{
+  int lcdMiddle = 8;
+  lcd.clear();
+  int lengthRow1 = strlen(row1);
+  int firstRowCursor = lcdMiddle - (lengthRow1/2);
+  if (lengthRow1 % 2 == 1)
+  {
+    firstRowCursor = firstRowCursor - 1;
+  }
+
+  int lengthRow2 = strlen(row2);
+  int secondRowCursor = lcdMiddle - (lengthRow2/2);
+  if (lengthRow2 % 2 == 1)
+  {
+    secondRowCursor = secondRowCursor - 1;
+  }
+
+  lcd.setCursor(firstRowCursor, 0);
+  lcd.print(row1);
+  lcd.setCursor(secondRowCursor, 1);
+  lcd.print(row2);
+}*/
+
 void loop()
 {
   delay(1500);
   Serial.println("Entered in loop function");
+  lcd.clear();
+  lcd.setCursor(2, 0);
+  lcd.print("Bonjour !!!");
+  delay(2000);
+  lcd.clear();
+  lcd.setCursor(3, 0);
+  lcd.print("Choisissez");
+  lcd.setCursor(3, 1);
+  lcd.print("une couleur");
   int choix_bouton = COULEUR_RIEN_PANTOUTE;
   while (choix_bouton == COULEUR_RIEN_PANTOUTE)
-  //while(true)
+  // while(true)
   {
     choix_bouton = choix_de_couleur_boutons();
-    //Serial.println(choix_bouton);
+    // Serial.println(choix_bouton);
   }
   // SERVO_SetAngle(0, 85);
   do
   {
-    sortSkittle(choix_bouton);
+    switch (choix_bouton)
+    {
+    case (RED):
+      // printLCD("Couleur choisie", "ROUGE");
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Couleur choisie");
+      lcd.setCursor(5, 1);
+      lcd.print("ROUGE");
+      break;
+    case (YELLOW):
+      // printLCD("Couleur choisie", "JAUNE");
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Couleur choisie");
+      lcd.setCursor(5, 1);
+      lcd.print("JAUNE");
+      break;
+    case (GREEN):
+      //printLCD("Couleur choisie", "VERT");
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Couleur choisie");
+      lcd.setCursor(6,1);
+      lcd.print("VERT");
+      break;
+    case (ORANGE):
+      //printLCD("Couleur choisie", "ORANGE");
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Couleur choisie");
+      lcd.setCursor(5,1);
+      lcd.print("ORANGE");
+      break;
+    case (VIOLET):
+      //printLCD("Couleur choisie", "VIOLET");
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Couleur choisie");
+      lcd.setCursor(5,1);
+      lcd.print("VIOLET");
+      break;
+    default:
+      //printLCD("Couleur choisie", "ERREUR");
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Couleur choisie");
+      lcd.setCursor(5,1);
+      lcd.print("ERREUR");
+      break;
+    }
+    delay(2000);
+    // sortSkittle(choix_bouton);
+    lcd.clear();
+      lcd.setCursor(2,0);
+      lcd.print("Tri en cours");
+    
+    while (1)
+    {
+    };
   } while (determinerCouleur() != COULEUR_RIEN_PANTOUTE);
   while (1)
   {
   };
-  
 }
 
 int choix_de_couleur_boutons()
@@ -446,6 +553,4 @@ int choix_de_couleur_boutons()
   return COULEUR_RIEN_PANTOUTE;
 
   delay(20);
-
-
 }
