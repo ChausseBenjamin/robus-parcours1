@@ -86,6 +86,48 @@ void lecture();
 int determinerCouleur();
 void sortSkittle(int target);
 
+void setup()
+{
+    pinMode(VIBRATOR_PIN,OUTPUT);
+  Serial.begin(9600);
+  BoardInit();
+  MOTOR_SetSpeed(0, 0);
+  MOTOR_SetSpeed(1, 0);
+  Serial.println("Color View Test!");
+
+  if (tcs.begin())
+  {
+    Serial.println("Found sensor");
+    tcs.setInterrupt(false); // turn on LED
+  }
+  else
+  {
+    Serial.println("No TCS34725 found ... check your connections");
+    while (1)
+      ; // halt!
+  }
+
+  // thanks PhilB for this gamma table!
+  // it helps convert RGB colors to what humans see
+  for (int i = 0; i < 256; i++)
+  {
+    float x = i;
+    x /= 255;
+    x = pow(x, 2.5);
+    x *= 255;
+
+    if (commonAnode)
+    {
+      gammatable[i] = 255 - x;
+    }
+    else
+    {
+      gammatable[i] = x;
+    }
+    // Serial.println(gammatable[i]);
+  }
+}
+
 // fonction qui lit la couleur d'un skittle avec une moyenne de cinq lectures
 void Lecture()
 {
@@ -401,7 +443,18 @@ void setup()
   lcd.print(row2);
 }*/
 
-void loop()
+void monter_recipient()
+{
+  delay(10);
+  SERVO_SetAngle(1, 130);
+  delay(1000);
+  digitalWrite(VIBRATOR_PIN,HIGH);
+  delay(2000);
+  digitalWrite(VIBRATOR_PIN,LOW);
+  delay(4000);
+  SERVO_SetAngle(1, 0);
+}
+void loop() 
 {
   delay(1500);
   Serial.println("Entered in loop function");
@@ -422,6 +475,7 @@ void loop()
     // Serial.println(choix_bouton);
   }
   // SERVO_SetAngle(0, 85);
+  monter_recipient();
   do
   {
     switch (choix_bouton)
