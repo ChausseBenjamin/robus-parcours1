@@ -486,7 +486,6 @@ void loop()
     break;
   }
   delay(2000);
-  // sortSkittle(choix_bouton);
 
   //Se Deplacer dans la surface
   //BalayerSurface()
